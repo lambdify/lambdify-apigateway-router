@@ -1,0 +1,16 @@
+# Java assets
+*.jar
+*.class
+
+# Maven output folder
+output
+target
+
+# IntelliJ Idea assets
+.idea
+*.iml
+
+# Eclipse assets
+.classpath
+.project
+
