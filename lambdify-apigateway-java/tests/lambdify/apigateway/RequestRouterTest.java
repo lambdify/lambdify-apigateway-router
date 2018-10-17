@@ -123,6 +123,20 @@ class RequestRouterTest {
         assertEquals( "[{\"name\":\"User\"}]", resp.getBody() );
     }
 
+    @DisplayName("Can handle requests which has content-type with charset  ")
+    @Test void test9()
+    {
+        urlRouter.memorizeEndpoint(Methods.PUT.and( "/users" ).with( userResource::updateUser ) );
+
+        val req = request(Methods.PUT, "/users" )
+                .withBody( "{\"name\":\"Helden Liniel\"}" )
+                .withHeaders( singletonMap("Content-Type", "application/json;charset=utf-8") );
+
+        val resp = urlRouter.doRouting( req, null );
+        assertEquals( 200, (int)resp.getStatusCode() );
+        assertEquals( "Helden Liniel", resp.getBody() );
+    }
+
     ProxyRequestEvent request(Methods method, String url ) {
         val req = new ProxyRequestEvent();
         req.setPath( url );

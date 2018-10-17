@@ -52,7 +52,9 @@ public interface RequestParameterReader {
 
 	static String getContentType( ProxyRequestEvent request ){
 		val contentType = request.getHeaders();
-		return contentType == null ? null : contentType.get( "content-type" );
+		return contentType == null ? null : removeCharsetIfexist(contentType.get( "content-type" ));
+
+
 	}
 
 	static Serializer getSerializer( ProxyRequestEvent request ) {
@@ -61,5 +63,10 @@ public interface RequestParameterReader {
 			return ApiGatewayConfig.INSTANCE.serializers().get( requestContentType );
 		}
 		return null;
+	}
+
+	static String removeCharsetIfexist(String requestContentType) {
+		val index = requestContentType == null ? 0 : requestContentType.indexOf(";");
+		return index > 0 ? requestContentType.substring(0, index) : requestContentType;
 	}
 }
