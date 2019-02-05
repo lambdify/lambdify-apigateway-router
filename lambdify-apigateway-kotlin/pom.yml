@@ -15,6 +15,7 @@ properties:
   version.aws-log4j2: 1.0.0
   version.log4j2: 2.8.2
   version.kotlin: 1.2.31
+  version.lombok: 1.18.4
 
 dependencies:
 # Kotlin Dependencies

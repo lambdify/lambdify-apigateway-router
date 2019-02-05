@@ -2,7 +2,7 @@ package lambdify.apigateway;
 
 import static lombok.AccessLevel.PRIVATE;
 import java.util.*;
-import lambdify.apigateway.Router.LambdaFunction;
+
 import lambdify.aws.events.apigateway.*;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -24,10 +24,11 @@ public class ApiGatewayConfig {
 	@NonNull String defaultContentType = "text/plain";
 
 	/**
-	 * The default {@link LambdaFunction} to be invoked when the router was not
+	 * The default {@link LambdaRouter.Function} to be invoked when the router was not
 	 * able to find a route that matches the current request.
 	 */
-	@NonNull LambdaFunction defaultNotFoundHandler = new DefaultNotFoundHandler();
+	@NonNull
+	LambdaRouter.Function defaultNotFoundHandler = new DefaultNotFoundHandler();
 
 	/**
 	 * The parameter reader responsible to convert String into specific objects.
@@ -69,10 +70,10 @@ public class ApiGatewayConfig {
 	 * The default handler for cases where the request wasn't mapped and
 	 * have no predefined response for it.
 	 */
-	class DefaultNotFoundHandler implements LambdaFunction {
+	class DefaultNotFoundHandler implements LambdaRouter.Function {
 
 		@Override
-		public ProxyResponseEvent invoke(ProxyRequestEvent input) {
+		public ProxyResponseEvent handleRequest(ProxyRequestEvent input) {
 			return Responses.notFound();
 		}
 	}

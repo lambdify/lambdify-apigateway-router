@@ -1,8 +1,7 @@
 package lambdify.apigateway;
 
-import com.amazonaws.services.lambda.runtime.*;
 import lambdify.aws.events.apigateway.*;
-import lambdify.core.LambdaStreamFunction;
+import lambdify.core.RequestHandler;
 import lombok.Value;
 import lombok.experimental.Accessors;
 
@@ -11,9 +10,9 @@ import lombok.experimental.Accessors;
  *
  * Created by miere.teixeira on 18/04/2018.
  */
-public interface Router {
+public interface LambdaRouter {
 
-    Entry<Route, LambdaFunction>[] getRoutes();
+    Entry<Route, Function>[] getRoutes();
 
     /**
      * Defines a Route.
@@ -24,15 +23,15 @@ public interface Router {
         final String url;
         final Methods method;
 
-        public Entry<Route, LambdaFunction> with(LambdaSupplier target ) {
+        public Entry<Route, Function> with(Supplier target ) {
             return new Entry<>( this, target );
         }
 
-        public Entry<Route, LambdaFunction> with( LambdaFunction target ) {
+        public Entry<Route, Function> with(Function target ) {
             return new Entry<>( this, target );
         }
 
-        public Entry<Route, LambdaFunction> withNoContent( LambdaConsumer target ) {
+        public Entry<Route, Function> withNoContent(Consumer target ) {
             return new Entry<>( this, target );
         }
     }
@@ -40,23 +39,21 @@ public interface Router {
 	/**
 	 * Represents a Lambda Function.
 	 */
-	interface LambdaFunction extends RequestHandler<ProxyRequestEvent, ProxyResponseEvent> {
+	interface Function extends RequestHandler<ProxyRequestEvent, ProxyResponseEvent> {
 
 		@Override
-		default ProxyResponseEvent handleRequest(ProxyRequestEvent input, Context context) {
-			return invoke(input);
+		default Class<ProxyRequestEvent> getInputClass() {
+			return ProxyRequestEvent.class;
 		}
-
-		ProxyResponseEvent invoke(ProxyRequestEvent input);
 	}
 
 	/**
 	 * Represents a Lambda Function that does not produce custom response.
 	 */
-	interface LambdaConsumer extends LambdaFunction {
+	interface Consumer extends Function {
 
 	    @Override
-	    default ProxyResponseEvent invoke(ProxyRequestEvent input) {
+	    default ProxyResponseEvent handleRequest(ProxyRequestEvent input) {
 	        consume(input);
 	        return Responses.noContent();
 	    }
@@ -67,10 +64,10 @@ public interface Router {
 	/**
 	 * Represents a Lambda Function that only produce custom responses.
 	 */
-	interface LambdaSupplier extends LambdaFunction {
+	interface Supplier extends Function {
 
 	    @Override
-	    default ProxyResponseEvent invoke(ProxyRequestEvent input) {
+	    default ProxyResponseEvent handleRequest(ProxyRequestEvent input) {
 	        return supply();
 	    }
 
@@ -80,8 +77,12 @@ public interface Router {
 	/**
 	 * Represents an Authorizer Function.
 	 */
-	abstract class AuthorizerFunction extends LambdaStreamFunction<TokenAuthorizerContext, AuthPolicy> {
+	interface AuthorizerFunction extends RequestHandler<TokenAuthorizerContext, AuthPolicy> {
 
+		@Override
+		default Class<TokenAuthorizerContext> getInputClass() {
+			return TokenAuthorizerContext.class;
+		}
 	}
 
 	/**

@@ -11,7 +11,6 @@ import lambdify.aws.events.apigateway.ProxyResponseEvent
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
 /**
@@ -37,9 +36,8 @@ class AppRouterTest {
 
     @DisplayName( "Can handle URLs that not matches any endpoint" )
     @Test fun test1(){
-        val req = request("/groups/1", Methods.GET)
-        val output = ByteArrayOutputStream()
-        app.handleRequest(req, output, null)
+        val input = request("/groups/1", Methods.GET)
+        val output = app.handle( input )
         val response = asResponse(output)
         assertEquals(404, response.statusCode)
         assertEquals( "Not Found", response.headers!!["X-Custom"] )
@@ -53,27 +51,22 @@ class AppRouterTest {
 
     @DisplayName( "Can match an endpoint" )
     @Test fun test3(){
-        val req = request("/users/1", Methods.GET)
-        val output = ByteArrayOutputStream()
-        app.handleRequest(req, output, null)
+        val input = request("/users/1", Methods.GET)
+        val output = app.handle( input )
         val response = asResponse(output)
         assertEquals(200, response.statusCode)
         assertEquals( "{'name':'Lambda User'}", response.body )
     }
 
     fun request( url:String, method:Methods )
-        = asInputStream( ProxyRequestEvent().apply {
+        = JSON.std.asBytes( ProxyRequestEvent().apply {
             this.path = url
             this.httpMethod = method.toString()
             this.headers = mapOf()
         })
 
-    fun asInputStream( obj:Any ): ByteArrayInputStream {
-        return ByteArrayInputStream( JSON.std.asBytes(obj) )
-    }
-
-    fun asResponse( output: ByteArrayOutputStream): ProxyResponseEvent {
-        return JSON.std.beanFrom( ProxyResponseEvent::class.java, output.toByteArray() )
+    fun asResponse( output: ByteArray ): ProxyResponseEvent {
+        return JSON.std.beanFrom( ProxyResponseEvent::class.java, output )
     }
 }
 

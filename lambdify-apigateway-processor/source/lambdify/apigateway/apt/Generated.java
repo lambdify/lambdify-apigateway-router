@@ -28,7 +28,7 @@ public interface Generated {
 		}
 
 		public String getGeneratedSimpleName(){
-			return getSimpleName() + "Router";
+			return getSimpleName() + "LambdaRouter";
 		}
 
 		public MustacheIterable getMethodsIterable(){

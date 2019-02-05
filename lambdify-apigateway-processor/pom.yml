@@ -11,6 +11,7 @@ packaging: jar
 properties:
   # versions of libraries used on this project
   version.log4j2: 2.8.2
+  version.lombok: 1.18.4
 
 dependencies:
 - { groupId: org.lambdify,          artifactId: lambdify-apigateway-java, version: 0.7.3.Final }

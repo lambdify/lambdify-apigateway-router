@@ -6,7 +6,7 @@ package lambdify.apigateway;
 public enum Methods {
     GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS, ALL;
 
-    public Router.Route and(String url ){
-        return new Router.Route(url, this);
+    public LambdaRouter.Route and(String url ){
+        return new LambdaRouter.Route(url, this);
     }
 }

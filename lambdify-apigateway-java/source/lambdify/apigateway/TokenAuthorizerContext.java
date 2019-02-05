@@ -2,7 +2,6 @@ package lambdify.apigateway;
 
 import java.util.*;
 import lombok.*;
-import lombok.experimental.var;
 
 @Data
 public class TokenAuthorizerContext {

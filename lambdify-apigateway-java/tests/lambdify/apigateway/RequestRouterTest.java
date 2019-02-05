@@ -26,7 +26,7 @@ class RequestRouterTest {
     {
         urlRouter.memorizeEndpoint(Methods.GET.and( "/users" ).withNoContent( userResource::retrieveUsers  ) );
         val endpoint = urlRouter.resolveRoute( request(Methods.GET, "/users" ) );
-        endpoint.invoke( new ProxyRequestEvent() );
+        endpoint.handleRequest( new ProxyRequestEvent() );
         verify(userResource).retrieveUsers( any() );
     }
 
@@ -35,7 +35,7 @@ class RequestRouterTest {
     {
         urlRouter.memorizeEndpoint(Methods.GET.and( "/users" ).withNoContent( userResource::retrieveUsers  ) );
         val endpoint = urlRouter.resolveRoute( request(Methods.GET, "/users/" ) );
-        endpoint.invoke( new ProxyRequestEvent() );
+        endpoint.handleRequest( new ProxyRequestEvent() );
         verify(userResource).retrieveUsers( any() );
     }
 
@@ -48,7 +48,7 @@ class RequestRouterTest {
         assertTrue( request.getPathParameters().containsKey( "id" ) );
         assertEquals( "123", request.getPathParameters().get("id") );
 
-        endpoint.invoke( new ProxyRequestEvent() );
+        endpoint.handleRequest( new ProxyRequestEvent() );
         verify(userResource).retrieveSingleUser( any() );
     }
 
@@ -58,7 +58,7 @@ class RequestRouterTest {
         urlRouter.memorizeEndpoint( Methods.GET.and( "/users/:id" ).withNoContent( userResource::retrieveSingleUser  ) );
         urlRouter.memorizeEndpoint( Methods.GET.and( "/users" ).withNoContent( userResource::retrieveUsers  ) );
         val endpoint = urlRouter.resolveRoute( request(Methods.GET, "/users/1" ) );
-        endpoint.invoke( new ProxyRequestEvent() );
+        endpoint.handleRequest( new ProxyRequestEvent() );
         verify(userResource).retrieveSingleUser( any() );
     }
 
@@ -71,7 +71,7 @@ class RequestRouterTest {
 
         val req = request(Methods.POST, "/users/" );
         val endpoint = urlRouter.resolveRoute( req );
-        val resp = endpoint.invoke( req );
+        val resp = endpoint.handleRequest( req );
 
         assertEquals( 204, (int)resp.getStatusCode() );
         verify( userResource ).saveUser( any() );
@@ -86,7 +86,7 @@ class RequestRouterTest {
 
         val req = request(Methods.GET, "users" );
         val endpoint = urlRouter.resolveRoute( req );
-        val resp = endpoint.invoke( req );
+        val resp = endpoint.handleRequest( req );
 
         assertEquals( 201, (int)resp.getStatusCode() );
         verify( userResource ).createReportOfUsers();
@@ -101,7 +101,7 @@ class RequestRouterTest {
 		        .withBody( "{\"name\":\"Helden Liniel\"}" )
 		        .withHeaders( singletonMap("Content-Type", "application/json") );
 
-        val resp = urlRouter.doRouting( req, null );
+        val resp = urlRouter.doRouting( req );
         assertEquals( 200, (int)resp.getStatusCode() );
         assertEquals( "Helden Liniel", resp.getBody() );
     }
@@ -110,7 +110,7 @@ class RequestRouterTest {
     @Test void test7(){
         urlRouter.memorizeEndpoint(Methods.GET.and( "/users" ).with( userResource::retrieveUsers ) );
         val req = request(Methods.GET, "/users" );
-        val resp = urlRouter.doRouting( req, null );
+        val resp = urlRouter.doRouting( req );
         assertEquals( "[{\"name\":\"User\"}]", resp.getBody() );
     }
 
@@ -119,7 +119,7 @@ class RequestRouterTest {
         urlRouter.memorizeEndpoint(Methods.GET.and( "/" ).with( userResource::retrieveUsers ) );
         urlRouter.memorizeEndpoint(Methods.GET.and( "/:any" ).with( userResource::createReportOfUsers ) );
         val req = request(Methods.GET, "/" );
-        val resp = urlRouter.doRouting( req, null );
+        val resp = urlRouter.doRouting( req );
         assertEquals( "[{\"name\":\"User\"}]", resp.getBody() );
     }
 
@@ -132,7 +132,7 @@ class RequestRouterTest {
                 .withBody( "{\"name\":\"Helden Liniel\"}" )
                 .withHeaders( singletonMap("Content-Type", "application/json;charset=utf-8") );
 
-        val resp = urlRouter.doRouting( req, null );
+        val resp = urlRouter.doRouting( req );
         assertEquals( 200, (int)resp.getStatusCode() );
         assertEquals( "Helden Liniel", resp.getBody() );
     }

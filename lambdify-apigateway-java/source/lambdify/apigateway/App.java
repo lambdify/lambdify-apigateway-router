@@ -1,11 +1,11 @@
 package lambdify.apigateway;
 
-import java.io.*;
-import com.amazonaws.services.lambda.runtime.*;
 import lambdify.aws.events.apigateway.*;
-import lambdify.core.LambdaStreamFunction;
+import lambdify.core.*;
 import lombok.*;
-import lombok.experimental.Accessors;
+import lombok.experimental.*;
+
+import java.io.*;
 
 /**
  * A simple AWS Lambda application that handles API Gateway requests.
@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @ToString
 @NoArgsConstructor
 @Accessors(fluent = true)
-public class App extends LambdaStreamFunction<ProxyRequestEvent, ProxyResponseEvent> {
+public class App implements RequestHandler<ProxyRequestEvent, ProxyResponseEvent> {
 
     /**
      * The internal router.
@@ -41,7 +41,7 @@ public class App extends LambdaStreamFunction<ProxyRequestEvent, ProxyResponseEv
      * @return
      */
     @SafeVarargs
-    public final App routes(Router.Entry<Router.Route, Router.LambdaFunction>... routes) {
+    public final App routes(LambdaRouter.Entry<LambdaRouter.Route, LambdaRouter.Function>... routes) {
         for ( val route : routes )
             getRouter().memorizeEndpoint( route );
         return this;
@@ -56,7 +56,7 @@ public class App extends LambdaStreamFunction<ProxyRequestEvent, ProxyResponseEv
      * @param routers
      * @return
      */
-    public final App routers( Router...routers ) {
+    public final App routers( LambdaRouter...routers ) {
         for ( val router : routers )
             routes( router.getRoutes() );
         return this;
@@ -66,23 +66,22 @@ public class App extends LambdaStreamFunction<ProxyRequestEvent, ProxyResponseEv
      * Handles a Lambda Function request.
      *
      * @param request The Lambda Function input
-     * @param context The Lambda execution environment context object.
      * @return The Lambda Function output
      *
-     * @see RequestHandler#handleRequest(Object, Context)
+     * @see RequestHandler#handleRequest(Object)
      */
     @Override
-    public ProxyResponseEvent handleRequest(ProxyRequestEvent request, Context context) {
+    public ProxyResponseEvent handleRequest( ProxyRequestEvent request ) {
         try {
-            return getRouter().doRouting( request, context );
+            return getRouter().doRouting( request );
         } catch ( Throwable cause ) {
             val error = new StringWriter();
             cause.printStackTrace( new PrintWriter( error ) );
             val errorMsg = error.toString();
-            context.getLogger().log( "Failed to handle request: " + cause.getMessage() );
-            context.getLogger().log( errorMsg );
-            context.getLogger().log( "Global configuration: " + ApiGatewayConfig.INSTANCE );
-	        context.getLogger().log( "App configuration: " + this );
+            System.err.println( "Failed to handle request: " + cause.getMessage() );
+            System.err.println( errorMsg );
+            System.err.println( "Global configuration: " + ApiGatewayConfig.INSTANCE );
+	        System.err.println( "App configuration: " + this );
             return Responses.internalServerError( errorMsg );
         }
     }

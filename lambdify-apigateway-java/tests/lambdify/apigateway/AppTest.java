@@ -1,15 +1,14 @@
 package lambdify.apigateway;
 
-import static lambdify.apigateway.Defaults.createRequest;
-import static lambdify.apigateway.Methods.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import com.amazonaws.services.lambda.runtime.*;
 import lombok.*;
 import org.junit.jupiter.api.*;
 
+import static lambdify.apigateway.Defaults.*;
+import static lambdify.apigateway.Methods.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 class AppTest {
 
-	private Context context = new DefaultAwsContext();
     private App app;
 
     @BeforeEach void setupApp()
@@ -31,7 +30,7 @@ class AppTest {
     @DisplayName( "Can handle URLs that not matches any endpoint" )
     @Test void test1(){
         val req = createRequest( "/profiles/1", Methods.GET );
-        val response = app.handleRequest( req, context);
+        val response = app.handleRequest( req );
         assertEquals(404, (int)response.getStatusCode() );
         assertEquals( "Not Found", response.getHeaders().get("X-Custom") );
     }
@@ -41,7 +40,7 @@ class AppTest {
     {
         Runnable method = () -> {
             val req = createRequest( "/profiles/1", Methods.GET );
-            val response = app.handleRequest( req, context);
+            val response = app.handleRequest( req );
             assertEquals(404, (int)response.getStatusCode() );
             assertEquals( "Not Found", response.getHeaders().get("X-Custom") );
         };
@@ -55,22 +54,8 @@ class AppTest {
     @DisplayName( "Can match an endpoint" )
     @Test void test3(){
         val req = createRequest( "/users/1", Methods.GET );
-        val response = app.handleRequest(req, context);
+        val response = app.handleRequest(req);
         assertEquals(200, (int)response.getStatusCode() );
         assertEquals( "{'name':'Lambda User'}", response.getBody() );
-    }
-
-    @Data class DefaultAwsContext implements Context {
-    	String
-		    awsRequestId,
-		    logGroupName, logStreamName,
-		    functionName, functionVersion, invokedFunctionArn;
-
-	    int remainingTimeInMillis, memoryLimitInMB;
-
-	    CognitoIdentity identity;
-	    ClientContext clientContext;
-
-	    LambdaLogger logger = System.err::println;
     }
 }
