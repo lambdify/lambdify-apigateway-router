@@ -16,7 +16,7 @@ public class PlainTextSerializer implements Serializer {
     }
 
     @Override @SuppressWarnings("unchecked")
-    public <T> T toObject(String content, Class<T> type, boolean isBase64Encoded) {
+    public <T> T toObject(String content, Class<T> type) {
         if ( String.class.equals(type) )
             return (T) content;
         throw new UnsupportedOperationException( "Can't convert to " + type );

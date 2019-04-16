@@ -20,7 +20,7 @@ public class JsonSerializer implements Serializer {
     }
 
     @Override
-    public <T> T toObject(String content, Class<T> type, boolean isBase64Encoded) {
+    public <T> T toObject(String content, Class<T> type) {
         try {
             return JSON.std.beanFrom(type, content);
         } catch (IOException e) {

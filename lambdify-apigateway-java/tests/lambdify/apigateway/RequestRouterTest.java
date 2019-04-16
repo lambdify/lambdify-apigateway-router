@@ -142,6 +142,7 @@ class RequestRouterTest {
         req.setPath( url );
         req.setHeaders( Collections.emptyMap() );
         req.setHttpMethod( method.toString() );
+        req.setIsBase64Encoded(false);
         return req;
     }
 }

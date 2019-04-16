@@ -1,7 +1,9 @@
 package lambdify.apigateway;
 
 import lambdify.aws.events.apigateway.ProxyRequestEvent;
-import lombok.val;
+import lombok.*;
+
+import java.util.*;
 
 /**
  * The reader of {@link ProxyRequestEvent} parameters.
@@ -47,25 +49,33 @@ public interface RequestParameterReader {
 		val serializer = getSerializer( request );
 		if ( serializer == null )
 			throw new RuntimeException( "Could not found a valid serializer for this request." );
-		return serializer.toObject( request.getBody(), type, false );
+
+		val body = request.getIsBase64Encoded()
+			 ? new String( Base64.getDecoder().decode( request.getBody() ) )
+			 : request.getBody();
+		return serializer.toObject( body, type);
 	}
 
 	static String getContentType( ProxyRequestEvent request ){
-		val contentType = request.getHeaders();
-		return contentType == null ? null : removeCharsetIfexist(contentType.get( "content-type" ));
-
-
+		val headers = request.getHeaders();
+		return headers == null ? null
+			: removeCharsetIfExists(headers.get( "content-type" ));
 	}
 
 	static Serializer getSerializer( ProxyRequestEvent request ) {
-		val requestContentType = getContentType( request );
-		if ( requestContentType != null ) {
-			return ApiGatewayConfig.INSTANCE.serializers().get( requestContentType );
-		}
-		return null;
+		var requestContentType = getContentType( request );
+		if ( requestContentType == null ) {
+            requestContentType = ApiGatewayConfig.INSTANCE.defaultContentType;
+            System.err.println( "No Content-Type header found. Using default content-type as fallback: " + requestContentType );
+        }
+
+        val serializer = ApiGatewayConfig.INSTANCE.serializers().get(requestContentType);
+        if ( serializer == null )
+            System.err.println( "Could not find API Gateway serializer for " + requestContentType );
+        return serializer;
 	}
 
-	static String removeCharsetIfexist(String requestContentType) {
+	static String removeCharsetIfExists(String requestContentType) {
 		val index = requestContentType == null ? 0 : requestContentType.indexOf(";");
 		return index > 0 ? requestContentType.substring(0, index) : requestContentType;
 	}

@@ -11,7 +11,7 @@ public interface Serializer {
 
 	Stringified toString(Object unserializedBody);
 
-	<T> T toObject(String content, Class<T> type, boolean isBase64Encoded);
+	<T> T toObject(String content, Class<T> type);
 
 	/**
 	 * A stringified representation of a serialized object.

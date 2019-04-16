@@ -50,7 +50,7 @@ public interface Responses {
 	static Serializer getResponseSerializer( String contentType ) {
 		if ( contentType == null || contentType.isEmpty() ) {
 			contentType = ApiGatewayConfig.INSTANCE.defaultContentType();
-			System.out.println( "No content type defined. Using default: " + contentType );
+			System.err.println( "No content type defined. Using default: " + contentType );
 		}
 
 		val serializers = ApiGatewayConfig.INSTANCE.serializers();
