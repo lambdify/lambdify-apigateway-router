@@ -24,7 +24,7 @@ dependencies:
 - { groupId: com.fasterxml.jackson.jr,   artifactId: jackson-jr-objects,   version: "2.9.8", scope: test }
 
 profiles:
-  - id: deploy-javadoc
+  - id: deploy-sources
     build:
       plugins:
       - groupId: org.jetbrains.dokka
