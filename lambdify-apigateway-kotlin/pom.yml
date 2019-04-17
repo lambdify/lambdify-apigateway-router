@@ -5,17 +5,13 @@ parent: { groupId: io.skullabs.boilerplates, artifactId: kotlin-1.2, version: 1.
 modelVersion: 4.0.0
 groupId: org.lambdify
 artifactId: lambdify-apigateway-kotlin
-version: 0.7.3.Final
+version: 0.8.0.Final
 packaging: jar
 
 properties:
   # versions of libraries used on this project
-  version.aws-sdk: 1.11.125
-  version.aws-lambda: 1.1.0
-  version.aws-log4j2: 1.0.0
-  version.log4j2: 2.8.2
-  version.kotlin: 1.2.31
-  version.lombok: 1.18.4
+  version.kotlin: 1.3.30
+  version.lombok: 1.18.6
 
 dependencies:
 # Kotlin Dependencies
@@ -24,8 +20,8 @@ dependencies:
 - { groupId: org.lambdify,         artifactId: lambdify-apigateway-java,   version: "${project.version}" }
 # Test Dependencies
 - { groupId: org.junit.jupiter,     artifactId: junit-jupiter-engine }
-- { groupId: com.fasterxml.jackson.module,   artifactId: jackson-module-kotlin,   version: "2.9.4.1",    scope: test }
-- { groupId: com.fasterxml.jackson.jr,   artifactId: jackson-jr-objects,   version: "2.9.5", scope: test }
+- { groupId: com.fasterxml.jackson.module,   artifactId: jackson-module-kotlin,   version: "2.9.8",    scope: test }
+- { groupId: com.fasterxml.jackson.jr,   artifactId: jackson-jr-objects,   version: "2.9.8", scope: test }
 
 profiles:
   - id: deploy-javadoc

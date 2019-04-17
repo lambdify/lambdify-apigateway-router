@@ -5,14 +5,13 @@ parent: { groupId: io.skullabs.boilerplates, artifactId: java-8, version: 1.0.0 
 modelVersion: 4.0.0
 groupId: org.lambdify
 artifactId: lambdify-apigateway-java
-version: 0.7.3.Final
+version: 0.8.0.Final
 packaging: jar
 
 properties:
   # versions of libraries used on this project
   version.aws-sdk: 1.11.125
-  version.aws-lambda: 1.1.0
-  version.lombok: 1.18.4
+  version.lombok: 1.18.6
 
 dependencies:
 # AWS Lambda Dependencies

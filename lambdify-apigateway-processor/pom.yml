@@ -5,7 +5,7 @@ parent: { groupId: io.skullabs.boilerplates, artifactId: java-8, version: 1.0.0 
 modelVersion: 4.0.0
 groupId: org.lambdify
 artifactId: lambdify-apigateway-processor
-version: 0.7.3.Final
+version: 0.8.0.Final
 packaging: jar
 
 properties:
@@ -14,7 +14,7 @@ properties:
   version.lombok: 1.18.4
 
 dependencies:
-- { groupId: org.lambdify,          artifactId: lambdify-apigateway-java, version: 0.7.3.Final }
+- { groupId: org.lambdify,          artifactId: lambdify-apigateway-java, version: 0.8.0.Final }
 - { groupId: com.github.spullara.mustache.java, artifactId: compiler, version: 0.9.5 }
 # Test Dependencies
 - { groupId: org.junit.jupiter,     artifactId: junit-jupiter-engine }
