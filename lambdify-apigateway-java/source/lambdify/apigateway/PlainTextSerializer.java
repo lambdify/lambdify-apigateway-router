@@ -8,6 +8,7 @@ import lombok.val;
 public class PlainTextSerializer implements Serializer {
 
     @Getter final String contentType = "text/plain";
+    @Getter final boolean candidateToBeDefaultSerializer = false;
 
     @Override
     public Stringified toString(Object unserializedBody) {

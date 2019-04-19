@@ -43,6 +43,8 @@ public class ApiGatewayConfig {
 		val found = ServiceLoader.load( Serializer.class );
 		for ( val serializer : found ) {
 			registerSerializer( serializer );
+			if ( serializer.isCandidateToBeDefaultSerializer() )
+			    defaultContentType = serializer.contentType();
 		}
 	}
 

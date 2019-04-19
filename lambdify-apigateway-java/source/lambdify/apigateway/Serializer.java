@@ -13,6 +13,10 @@ public interface Serializer {
 
 	<T> T toObject(String content, Class<T> type);
 
+	default boolean isCandidateToBeDefaultSerializer() {
+		return true;
+	}
+
 	/**
 	 * A stringified representation of a serialized object.
 	 */
